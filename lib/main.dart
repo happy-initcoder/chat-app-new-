@@ -1,6 +1,6 @@
 import 'package:capp/Screens/authScreen.dart';
 import 'package:capp/Screens/conversationScreen.dart';
-import 'package:capp/models/conversation.dart';
+
 import 'package:capp/widget/conversation.dart';
 import 'package:flutter/material.dart';
 
@@ -16,8 +16,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Chat app',
       debugShowCheckedModeBanner: false,
-      home: ConversationList(),
+      home: AuthScreen(),
       theme: ThemeData(primarySwatch: Colors.blue, hintColor: null),
+      routes: {
+        AuthScreen.routeName: (ctx) => AuthScreen(),
+        ConversationList.routeName: (ctx) => ConversationList()
+      },
     );
   }
 }

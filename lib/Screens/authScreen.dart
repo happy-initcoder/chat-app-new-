@@ -1,18 +1,31 @@
 import 'dart:convert';
 
+import 'package:capp/Screens/conversationScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 
+import '../API/BaseUrl.dart';
+
+class UserDetail {
+  static String? userid;
+}
+
+String? UserID() {
+  return UserDetail.userid;
+}
+
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
+
+  static const routeName = '/auth-Screen';
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  bool _isLogin = false;
+  bool _isLogin = true;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -20,17 +33,15 @@ class _AuthScreenState extends State<AuthScreen> {
 
   Map? mapResponse;
   Map? dataResponse;
-  String? userid;
 
   void register(String email, String password, String userName) async {
     try {
-      Response response = await post(
-          Uri.parse('https://3c3b-112-196-166-7.in.ngrok.io/api/auth/register'),
-          body: {
-            "email": email,
-            "password": password,
-            "username": userName,
-          });
+      Response response =
+          await post(Uri.parse('${BaseUrl.baseUrl}/api/auth/register'), body: {
+        "email": email,
+        "password": password,
+        "username": userName,
+      });
 
       if (response.statusCode == 201) {
         print('worked successfully');
@@ -44,18 +55,17 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void login(String email, String password) async {
     try {
-      Response response = await post(
-          Uri.parse('https://68f3-112-196-188-56.in.ngrok.io/api/auth/login'),
-          body: {
-            "email": email,
-            "password": password,
-          });
+      Response response =
+          await post(Uri.parse('${BaseUrl.baseUrl}/api/auth/login'), body: {
+        "email": email,
+        "password": password,
+      });
       mapResponse = json.decode(response.body);
       dataResponse = mapResponse?['data'];
-      userid = dataResponse?['userId'];
+      UserDetail.userid = (dataResponse?['userId']);
 
       if (response.statusCode == 200) {
-        print('worked successfully');
+        Navigator.of(context).pushNamed(ConversationList.routeName);
       } else {
         print('faild');
       }
@@ -64,9 +74,10 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  static const routeName = '/auth-Screen';
   @override
   Widget build(BuildContext context) {
-    print(userid);
+    print(UserDetail.userid);
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Center(
@@ -122,7 +133,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                     TextFormField(
                       controller: passwordController,
-                      obscureText: true,
+                      // obscureText: true,
                       // decoration: InputDecoration(labelText: 'Password'),
                       validator: (value) {
                         if (value!.isEmpty || value.length < 6) {
