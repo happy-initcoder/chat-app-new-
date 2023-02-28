@@ -7,64 +7,42 @@ import '../Screens/authScreen.dart';
 import 'package:http/http.dart' as http;
 
 import 'BaseUrl.dart';
-
-class FriendName {
-  String? name;
-}
+import 'firendCollection.dart';
 
 class GetDetailsAPI {
-  static List<FriendName> names = [];
   static Map? mapData;
-  static List? listResponse;
   static List? listData;
-  static String? friendId;
-  static Map? friendData;
-  static Map? detail;
-  static List? detailList;
+  static List<getFriendDetail>? listResponse = [];
 
   static callFun() {
     getConversation();
   }
 
   static getConversation() async {
-    try {
-      http.Response response = await http.get(
-        Uri.parse('${BaseUrl.baseUrl}/api/conversations/${UserID()}'),
-      );
-      mapData = json.decode(response.body);
-      listResponse = mapData?['data'];
+    http.Response response = await http.get(
+      Uri.parse('${BaseUrl.baseUrl}/api/users/'),
+    );
+    mapData = json.decode(response.body);
+    listData = mapData?['data'];
 
-      print(mapData);
-      if (response.statusCode == 200) {
-      } else {
-        print('failed');
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-    getFriendDetail();
-  }
+    print(mapData?['data'][0]);
 
-  static getFriendDetail() async {
-    for (var i = 0; i < listResponse!.length; i++) {
-      listData = listResponse?[i]["members"];
-      if (listData?[0] == UserID()) {
-        friendId = listData?[1];
-      } else {
-        friendId = listData?[0];
-      }
+    listResponse = jsonDecode(response.body)
+        .map((item) => getFriendDetail.fromJson(item))
+        .toList()
+        .cast<getFriendDetail>();
+    // print(listResponse);
+    // if (response.statusCode == 200) {
+    //   List<dynamic> jsonlist = jsonDecode(listData![0].toString());
+    //   return jsonlist
+    //       .map((json) => getFriendDetail(
+    //           sId: json['_id'],
+    //           username: json['username'],
+    //           email: json['email']))
+    //       .toList();
+    // } else
+    //   print('failed');
 
-      try {
-        http.Response response = await http.get(
-          Uri.parse('${BaseUrl.baseUrl}/api/users/${friendId}'),
-        );
-        friendData = json.decode(response.body);
-        detail = friendData?['data'];
-        names = detail?['username'];
-      } catch (e) {
-        print(e.toString());
-      }
-      print(detail?['username']);
-    }
+    // return listResponse;
   }
 }
