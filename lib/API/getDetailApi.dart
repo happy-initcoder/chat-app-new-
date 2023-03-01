@@ -10,39 +10,26 @@ import 'BaseUrl.dart';
 import 'firendCollection.dart';
 
 class GetDetailsAPI {
-  static Map? mapData;
-  static List? listData;
-  static List<getFriendDetail>? listResponse = [];
-
-  static callFun() {
-    getConversation();
-  }
+  static List<GetFriendDetail>? listResponse = [];
 
   static getConversation() async {
     http.Response response = await http.get(
       Uri.parse('${BaseUrl.baseUrl}/api/users/'),
     );
-    mapData = json.decode(response.body);
-    listData = mapData?['data'];
 
-    print(mapData?['data'][0]);
+    List<GetFriendDetail> flist = [];
 
-    listResponse = jsonDecode(response.body)
-        .map((item) => getFriendDetail.fromJson(item))
-        .toList()
-        .cast<getFriendDetail>();
-    // print(listResponse);
-    // if (response.statusCode == 200) {
-    //   List<dynamic> jsonlist = jsonDecode(listData![0].toString());
-    //   return jsonlist
-    //       .map((json) => getFriendDetail(
-    //           sId: json['_id'],
-    //           username: json['username'],
-    //           email: json['email']))
-    //       .toList();
-    // } else
-    //   print('failed');
-
-    // return listResponse;
+    if (response.statusCode == 200) {
+      var urjson = json.decode(response.body);
+      var jsonData = urjson['data'];
+      print(jsonData);
+      // listResponse =
+      //     (jsonData).map((data) => new GetFriendDetail.fromJson(data)).toList();
+      // print(listResponse);
+      for (var jData in jsonData) {
+        flist.add(GetFriendDetail.fromJson(jData));
+      }
+    }
+    return flist;
   }
 }

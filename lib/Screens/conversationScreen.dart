@@ -13,8 +13,12 @@ class ConversationList extends StatefulWidget {
 class _ConversationListState extends State<ConversationList> {
   @override
   void initState() {
+    GetDetailsAPI.getConversation().then((value) {
+      setState(() {
+        GetDetailsAPI.listResponse?.addAll(value);
+      });
+    });
     super.initState();
-    GetDetailsAPI.callFun();
   }
 
   @override
@@ -23,18 +27,18 @@ class _ConversationListState extends State<ConversationList> {
       appBar: AppBar(
         title: Text('Conversations'),
       ),
-      // body: ListView.builder(
-      //     itemCount: GetDetailsAPI.listResponse?.length,
-      //     itemBuilder: (BuildContext context, index) {
-      //       return Card(
-      //         child: Container(
-      //           width: double.infinity,
-      //           padding: EdgeInsets.all(10),
-      //           child: Text('${GetDetailsAPI.listResponse?[index].username}'),
-      //           // Text("index${index}")
-      //         ),
-      //       );
-      //     }),
+      body: ListView.builder(
+          itemCount: GetDetailsAPI.listResponse?.length,
+          itemBuilder: (BuildContext context, index) {
+            return Card(
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(10),
+                child: Text(
+                    GetDetailsAPI.listResponse![index].username.toString()),
+              ),
+            );
+          }),
     );
   }
 }

@@ -1,30 +1,33 @@
 import 'dart:convert';
 
-class getFriendDetail {
-  String? sId;
-  String? username;
-  String? email;
+List<GetFriendDetail> getFriendDetailFromJson(String str) =>
+    List<GetFriendDetail>.from(
+        json.decode(str).map((x) => GetFriendDetail.fromJson(x)));
 
-  getFriendDetail({
-    this.sId,
-    this.username,
-    this.email,
+String getFriendDetailToJson(List<GetFriendDetail> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+class GetFriendDetail {
+  GetFriendDetail({
+    required this.id,
+    required this.username,
+    required this.email,
   });
 
-  getFriendDetail.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    username = json['username'];
-    email = json['email'];
-  }
+  String id;
+  String username;
+  String email;
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['username'] = this.username;
-    data['email'] = this.email;
+  factory GetFriendDetail.fromJson(Map<String, dynamic> json) =>
+      GetFriendDetail(
+        id: json["_id"],
+        username: json["username"],
+        email: json["email"],
+      );
 
-    return data;
-  }
-
-  toList() {}
+  Map<String, dynamic> toJson() => {
+        "_id": id,
+        "username": username,
+        "email": email,
+      };
 }
