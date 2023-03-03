@@ -1,3 +1,3 @@
 class BaseUrl {
-  static String? baseUrl = 'https://75e4-112-196-188-28.in.ngrok.io';
+  static String? baseUrl = 'https://f4bd-112-196-188-37.in.ngrok.io';
 }

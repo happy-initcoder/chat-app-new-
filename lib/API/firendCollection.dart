@@ -30,4 +30,6 @@ class GetFriendDetail {
         "username": username,
         "email": email,
       };
+
+  toList() {}
 }

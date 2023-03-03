@@ -9,10 +9,8 @@ import '../API/BaseUrl.dart';
 
 class UserDetail {
   static String? userid;
-}
-
-String? UserID() {
-  return UserDetail.userid;
+  static String? username;
+  static String? email;
 }
 
 class AuthScreen extends StatefulWidget {
@@ -62,8 +60,11 @@ class _AuthScreenState extends State<AuthScreen> {
       });
       mapResponse = json.decode(response.body);
       dataResponse = mapResponse?['data'];
-      UserDetail.userid = (dataResponse?['userId']);
-
+      UserDetail.userid = (dataResponse?['_id']);
+      UserDetail.email = (dataResponse?['email']);
+      UserDetail.username = (dataResponse?['username']);
+      print(UserDetail.userid);
+      // print(mapResponse);
       if (response.statusCode == 200) {
         Navigator.of(context).pushNamed(ConversationList.routeName);
       } else {

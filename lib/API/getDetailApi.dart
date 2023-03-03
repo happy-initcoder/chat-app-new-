@@ -22,10 +22,7 @@ class GetDetailsAPI {
     if (response.statusCode == 200) {
       var urjson = json.decode(response.body);
       var jsonData = urjson['data'];
-      print(jsonData);
-      // listResponse =
-      //     (jsonData).map((data) => new GetFriendDetail.fromJson(data)).toList();
-      // print(listResponse);
+
       for (var jData in jsonData) {
         flist.add(GetFriendDetail.fromJson(jData));
       }
