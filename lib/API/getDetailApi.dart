@@ -1,11 +1,5 @@
 import 'dart:convert';
-
-import 'package:capp/widget/conversation.dart';
-import 'package:flutter/material.dart';
-
-import '../Screens/authScreen.dart';
 import 'package:http/http.dart' as http;
-
 import 'BaseUrl.dart';
 import 'firendCollection.dart';
 

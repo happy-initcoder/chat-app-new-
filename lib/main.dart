@@ -3,7 +3,6 @@ import 'package:capp/Screens/authScreen.dart';
 import 'package:capp/Screens/conversationScreen.dart';
 import 'package:capp/Screens/chatScreen.dart';
 
-import 'package:capp/widget/conversation.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -18,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Chat app',
       debugShowCheckedModeBanner: false,
-      home: AuthScreen(),
+      home: ChatScreen(),
       theme: ThemeData(primarySwatch: Colors.blue, hintColor: null),
       routes: {
         AuthScreen.routeName: (ctx) => AuthScreen(),

@@ -1,7 +1,7 @@
 import 'package:capp/API/firendCollection.dart';
 import 'package:capp/API/getDetailApi.dart';
 import 'package:capp/Screens/chatScreen.dart';
-import 'package:capp/widget/conversation.dart';
+
 import 'package:flutter/material.dart';
 
 class ConversationList extends StatefulWidget {
