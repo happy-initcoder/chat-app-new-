@@ -21,22 +21,21 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   late IO.Socket socket;
   final TextEditingController messageController = TextEditingController();
-  static List<Messagemodel>? messageList = [];
 
   void addMessages() async {
     try {
       http.Response response =
           await http.post(Uri.parse('${BaseUrl.baseUrl}/api/messages'), body: {
-        "from": UserDetail.userid,
-        "to": GetDetailsAPI.listResponse![1].id,
+        "from": '63dcb774860b824030a14466',
+        "to": '63e08b8cd73fc0ea247d61b3',
         "text": messageController.text.trim(),
       });
-
-      if (response.statusCode == 201) {
-        print('worked successfully');
-      } else {
-        print('faild');
-      }
+      print(response.body);
+      // if (response.statusCode == 201) {
+      //   print('worked successfully');
+      // } else {
+      //   print('faild');
+      // }
     } catch (e) {
       print(e.toString());
     }
@@ -45,7 +44,7 @@ class _ChatScreenState extends State<ChatScreen> {
   static getMessages() async {
     http.Response response = await http.get(
       Uri.parse(
-          '${BaseUrl.baseUrl}/api/messages/${UserDetail.userid}/63e08b8cd73fc0ea247d61b3'),
+          '${BaseUrl.baseUrl}/api/messages/63e08b8cd73fc0ea247d61b3/63dcb774860b824030a14466'),
     );
 
     List<Messagemodel> mlist = [];
@@ -63,31 +62,33 @@ class _ChatScreenState extends State<ChatScreen> {
 
   _sendMessage() {
     socket.emit('sendMessage', {
-      // 'senderId': UserDetail.userid,
-      // 'receiverId': GetDetailsAPI.listResponse![1].id,
-      // 'text': messageController.text.trim()
-      addMessages()
+      'senderId': '63e08b8cd73fc0ea247d61b3',
+      'receiverId': '63dcb774860b824030a14466',
+      'text': messageController.text.trim()
     });
+    addMessages();
+    messageController.clear();
   }
 
   _connectSocket() {
     socket.onConnect((data) => print('connection established'));
     socket.onConnectError((data) => print('Connect Error: $data'));
     socket.onDisconnect((data) => print('Socket.IO server disconnected'));
+    socket.on('getMessages', (data) => Messagemodel.messageList?.add(data));
   }
 
   @override
   void initState() {
     super.initState();
     socket = IO.io(
-      'https://ed7b-112-196-188-68.in.ngrok.io',
+      '${BaseUrl.baseUrl}',
       IO.OptionBuilder().setTransports(['websocket']).setQuery(
           {'from': UserDetail.userid}).build(),
     );
     _connectSocket();
     getMessages().then((value) {
       setState(() {
-        messageList?.addAll(value);
+        Messagemodel.messageList?.addAll(value);
       });
     });
   }
@@ -98,40 +99,89 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: Text(''),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          ListView.builder(
-            itemBuilder: (context, index) {
-              return Text(messageList![index].text as String);
-            },
-            itemCount: messageList?.length,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: Row(children: [
-              Expanded(
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(color: Colors.black)),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 5, right: 5),
-                    child: TextFormField(
-                      controller: messageController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Message...',
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              height: 610,
+              child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return Row(
+                    mainAxisAlignment:
+                        UserDetail.userid != Messagemodel.messageList![index].to
+                            ? MainAxisAlignment.end
+                            : MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        decoration: BoxDecoration(
+                          color: UserDetail.userid !=
+                                  Messagemodel.messageList![index].to
+                              ? Colors.grey[300]
+                              : Theme.of(context).colorScheme.secondary,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                            bottomLeft: UserDetail.userid !=
+                                    Messagemodel.messageList![index].to
+                                ? Radius.circular(12)
+                                : Radius.circular(0),
+                            bottomRight: UserDetail.userid !=
+                                    Messagemodel.messageList![index].to
+                                ? Radius.circular(0)
+                                : Radius.circular(12),
+                          ),
+                        ),
+                        width: 140,
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                        margin:
+                            EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                        child: Text(
+                          Messagemodel.messageList![index].text[0],
+                          style: TextStyle(
+                            color: UserDetail.userid !=
+                                    Messagemodel.messageList![index].to
+                                ? Colors.black
+                                : Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
-                      style: TextStyle(fontSize: 18),
+                    ],
+                  );
+                },
+                itemCount: Messagemodel.messageList?.length,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 5, left: 5),
+              child: Row(children: [
+                Expanded(
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(color: Colors.black)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 5, right: 5),
+                      child: TextFormField(
+                        controller: messageController,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Message...',
+                        ),
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              IconButton(onPressed: () {}, icon: Icon(Icons.send))
-            ]),
-          )
-        ],
+                IconButton(onPressed: _sendMessage, icon: Icon(Icons.send))
+              ]),
+            )
+          ],
+        ),
       ),
     );
   }
