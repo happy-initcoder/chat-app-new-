@@ -40,7 +40,8 @@ class Messagemodel extends ChangeNotifier {
         // "__v": v,
       };
 
-  // addNewMessage(Messagemodel message){
-  //   messageList.add()
-  // }
+  addNewMessage(Messagemodel message) {
+    messageList?.add(message);
+    notifyListeners();
+  }
 }

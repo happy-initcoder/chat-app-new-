@@ -30,7 +30,7 @@ class _ChatScreenState extends State<ChatScreen> {
         "to": '63e08b8cd73fc0ea247d61b3',
         "text": messageController.text.trim(),
       });
-      print(response.body);
+      // print(response.body);
       // if (response.statusCode == 201) {
       //   print('worked successfully');
       // } else {
@@ -52,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
     if (response.statusCode == 200) {
       var urjson = json.decode(response.body);
       var jsonData = urjson['data'];
-      print(urjson);
+
       for (var jData in jsonData) {
         mlist.add(Messagemodel.fromJson(jData));
       }
@@ -69,6 +69,10 @@ class _ChatScreenState extends State<ChatScreen> {
     addMessages();
     messageController.clear();
   }
+
+  // _reciveMessage(){
+  //   socket.on('getMessages', (data) => )
+  // }
 
   _connectSocket() {
     socket.onConnect((data) => print('connection established'));
@@ -97,8 +101,14 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(''),
-      ),
+          title: Row(
+        children: [
+          CircleAvatar(
+            radius: 25,
+          ),
+          Text(GetDetailsAPI.listResponse![GetDetailsAPI.index].username),
+        ],
+      )),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,

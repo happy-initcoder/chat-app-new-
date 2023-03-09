@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Chat app',
       debugShowCheckedModeBanner: false,
-      home: ChatScreen(),
+      home: ConversationList(),
       theme: ThemeData(primarySwatch: Colors.blue, hintColor: null),
       routes: {
         AuthScreen.routeName: (ctx) => AuthScreen(),

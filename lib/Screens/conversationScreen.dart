@@ -36,6 +36,7 @@ class _ConversationListState extends State<ConversationList> {
             return InkWell(
               onTap: () {
                 Navigator.pushNamed(context, ChatScreen.routeName);
+                GetDetailsAPI.getIndexVal(index);
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10),

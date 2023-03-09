@@ -5,6 +5,14 @@ import 'firendCollection.dart';
 
 class GetDetailsAPI {
   static List<GetFriendDetail>? listResponse = [];
+  static List<GetFriendDetail>? singleUserdetail = [];
+  static int index = 0;
+
+  static getIndexVal(int a) {
+    index = a;
+    // singleUserdetail?.add(GetDetailsAPI.listResponse![b]);
+    // print(singleUserdetail);
+  }
 
   static getConversation() async {
     http.Response response = await http.get(
