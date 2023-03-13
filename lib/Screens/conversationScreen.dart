@@ -1,6 +1,7 @@
 import 'package:capp/API/firendCollection.dart';
 import 'package:capp/API/getDetailApi.dart';
 import 'package:capp/Screens/chatScreen.dart';
+import 'package:easy_search_bar/easy_search_bar.dart';
 
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,7 @@ class ConversationList extends StatefulWidget {
 }
 
 class _ConversationListState extends State<ConversationList> {
+  String searchValue = '';
   @override
   void initState() {
     GetDetailsAPI.getConversation().then((value) {
@@ -27,8 +29,9 @@ class _ConversationListState extends State<ConversationList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: EasySearchBar(
         title: Text('Conversations'),
+        onSearch: (value) => setState(() => searchValue = value),
       ),
       body: ListView.builder(
           itemCount: GetDetailsAPI.listResponse?.length,

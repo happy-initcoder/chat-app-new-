@@ -30,12 +30,12 @@ class _ChatScreenState extends State<ChatScreen> {
         "to": '63e08b8cd73fc0ea247d61b3',
         "text": messageController.text.trim(),
       });
-      // print(response.body);
-      // if (response.statusCode == 201) {
-      //   print('worked successfully');
-      // } else {
-      //   print('faild');
-      // }
+      print(response.body);
+      if (response.statusCode == 200) {
+        print('worked successfully');
+      } else {
+        print('faild');
+      }
     } catch (e) {
       print(e.toString());
     }
@@ -71,14 +71,14 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   // _reciveMessage(){
-  //   socket.on('getMessages', (data) => )
+  //   socket.on('getMessage', (data) => print(data));
   // }
 
   _connectSocket() {
     socket.onConnect((data) => print('connection established'));
     socket.onConnectError((data) => print('Connect Error: $data'));
     socket.onDisconnect((data) => print('Socket.IO server disconnected'));
-    socket.on('getMessages', (data) => Messagemodel.messageList?.add(data));
+    socket.on('getMessage', (data) => Messagemodel.messageList?.add(data));
   }
 
   @override
@@ -115,55 +115,59 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Container(
               height: 610,
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return Row(
-                    mainAxisAlignment:
-                        UserDetail.userid != Messagemodel.messageList![index].to
-                            ? MainAxisAlignment.end
-                            : MainAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                          color: UserDetail.userid !=
-                                  Messagemodel.messageList![index].to
-                              ? Colors.grey[300]
-                              : Theme.of(context).colorScheme.secondary,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
-                            bottomLeft: UserDetail.userid !=
-                                    Messagemodel.messageList![index].to
-                                ? Radius.circular(12)
-                                : Radius.circular(0),
-                            bottomRight: UserDetail.userid !=
-                                    Messagemodel.messageList![index].to
-                                ? Radius.circular(0)
-                                : Radius.circular(12),
-                          ),
-                        ),
-                        width: 140,
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                        margin:
-                            EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                        child: Text(
-                          Messagemodel.messageList![index].text[0],
-                          style: TextStyle(
+              child: SingleChildScrollView(
+                reverse: true,
+                child: ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  // scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Row(
+                      mainAxisAlignment: UserDetail.userid !=
+                              Messagemodel.messageList![index].to
+                          ? MainAxisAlignment.end
+                          : MainAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
                             color: UserDetail.userid !=
                                     Messagemodel.messageList![index].to
-                                ? Colors.black
-                                : Colors.white,
-                            fontSize: 16,
+                                ? Colors.grey[300]
+                                : Theme.of(context).colorScheme.secondary,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                              bottomLeft: UserDetail.userid !=
+                                      Messagemodel.messageList![index].to
+                                  ? Radius.circular(12)
+                                  : Radius.circular(0),
+                              bottomRight: UserDetail.userid !=
+                                      Messagemodel.messageList![index].to
+                                  ? Radius.circular(0)
+                                  : Radius.circular(12),
+                            ),
+                          ),
+                          width: 140,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 16),
+                          margin:
+                              EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                          child: Text(
+                            Messagemodel.messageList![index].text[0],
+                            style: TextStyle(
+                              color: UserDetail.userid !=
+                                      Messagemodel.messageList![index].to
+                                  ? Colors.black
+                                  : Colors.white,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                },
-                itemCount: Messagemodel.messageList?.length,
+                      ],
+                    );
+                  },
+                  itemCount: Messagemodel.messageList?.length,
+                ),
               ),
             ),
             Padding(
