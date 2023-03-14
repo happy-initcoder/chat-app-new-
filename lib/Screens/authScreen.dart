@@ -63,8 +63,6 @@ class _AuthScreenState extends State<AuthScreen> {
       UserDetail.userid = (dataResponse?['_id']);
       UserDetail.email = (dataResponse?['email']);
       UserDetail.username = (dataResponse?['username']);
-      print(UserDetail.userid);
-      // print(mapResponse);
       if (response.statusCode == 200) {
         Navigator.of(context).pushNamed(ConversationList.routeName);
       } else {

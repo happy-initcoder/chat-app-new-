@@ -1,9 +1,15 @@
 import 'package:capp/API/firendCollection.dart';
 import 'package:capp/API/getDetailApi.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:capp/API/messagemodel.dart';
 import 'package:capp/Screens/chatScreen.dart';
 import 'package:easy_search_bar/easy_search_bar.dart';
 
 import 'package:flutter/material.dart';
+
+import '../API/BaseUrl.dart';
+import '../API/socket.dart';
+import 'authScreen.dart';
 
 class ConversationList extends StatefulWidget {
   const ConversationList({super.key});
@@ -18,12 +24,25 @@ class _ConversationListState extends State<ConversationList> {
   String searchValue = '';
   @override
   void initState() {
+    ClassSocket.socket = IO.io(
+      '${BaseUrl.baseUrl}',
+      IO.OptionBuilder().setTransports(['websocket']).setQuery(
+          {'from': UserDetail.userid}).build(),
+    );
     GetDetailsAPI.getConversation().then((value) {
       setState(() {
         GetDetailsAPI.listResponse?.addAll(value);
       });
     });
     super.initState();
+  }
+
+  _connectSocket() {
+    ClassSocket.socket.onConnect((data) => print('connection established'));
+    ClassSocket.socket.onConnectError((data) => print('Connect Error: $data'));
+    ClassSocket.socket
+        .onDisconnect((data) => print('Socket.IO server disconnected'));
+    // socket.on('getMessage', (data) => );
   }
 
   @override
@@ -57,7 +76,7 @@ class _ConversationListState extends State<ConversationList> {
                             radius: 25,
                           ),
                           CircleAvatar(
-                            radius: 10,
+                            radius: 7,
                             backgroundColor: Colors.green,
                           ),
                         ]),

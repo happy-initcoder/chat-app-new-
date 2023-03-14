@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:capp/API/getDetailApi.dart';
+import 'package:capp/API/socket.dart';
 import 'package:capp/Screens/authScreen.dart';
 import 'package:capp/widget/messageBubble.dart';
 import 'package:flutter/material.dart';
@@ -19,15 +20,14 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  late IO.Socket socket;
   final TextEditingController messageController = TextEditingController();
 
   void addMessages() async {
     try {
       http.Response response =
           await http.post(Uri.parse('${BaseUrl.baseUrl}/api/messages'), body: {
-        "from": '63dcb774860b824030a14466',
-        "to": '63e08b8cd73fc0ea247d61b3',
+        "from": UserDetail.userid,
+        "to": GetDetailsAPI.listResponse![GetDetailsAPI.index].id,
         "text": messageController.text.trim(),
       });
       print(response.body);
@@ -44,7 +44,7 @@ class _ChatScreenState extends State<ChatScreen> {
   static getMessages() async {
     http.Response response = await http.get(
       Uri.parse(
-          '${BaseUrl.baseUrl}/api/messages/63e08b8cd73fc0ea247d61b3/63dcb774860b824030a14466'),
+          '${BaseUrl.baseUrl}/api/messages/${UserDetail.userid}/${GetDetailsAPI.listResponse![GetDetailsAPI.index].id}'),
     );
 
     List<Messagemodel> mlist = [];
@@ -61,9 +61,9 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   _sendMessage() {
-    socket.emit('sendMessage', {
-      'senderId': '63e08b8cd73fc0ea247d61b3',
-      'receiverId': '63dcb774860b824030a14466',
+    ClassSocket.socket.emit('sendMessage', {
+      'senderId': UserDetail.userid,
+      'receiverId': GetDetailsAPI.listResponse![GetDetailsAPI.index].id,
       'text': messageController.text.trim()
     });
     addMessages();
@@ -75,21 +75,22 @@ class _ChatScreenState extends State<ChatScreen> {
   // }
 
   _connectSocket() {
-    socket.onConnect((data) => print('connection established'));
-    socket.onConnectError((data) => print('Connect Error: $data'));
-    socket.onDisconnect((data) => print('Socket.IO server disconnected'));
-    socket.on('getMessage', (data) => Messagemodel.messageList?.add(data));
+    ClassSocket.socket.onConnect((data) => print('connection established'));
+    ClassSocket.socket.onConnectError((data) => print('Connect Error: $data'));
+    ClassSocket.socket
+        .onDisconnect((data) => print('Socket.IO server disconnected'));
+    // socket.on('getMessage', (data) => );
   }
 
   @override
   void initState() {
     super.initState();
-    socket = IO.io(
-      '${BaseUrl.baseUrl}',
-      IO.OptionBuilder().setTransports(['websocket']).setQuery(
-          {'from': UserDetail.userid}).build(),
-    );
-    _connectSocket();
+    // socket = IO.io(
+    //   '${BaseUrl.baseUrl}',
+    //   IO.OptionBuilder().setTransports(['websocket']).setQuery(
+    //       {'from': UserDetail.userid}).build(),
+    // );
+    // _connectSocket();
     getMessages().then((value) {
       setState(() {
         Messagemodel.messageList?.addAll(value);
@@ -101,14 +102,25 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Row(
-        children: [
-          CircleAvatar(
-            radius: 25,
-          ),
-          Text(GetDetailsAPI.listResponse![GetDetailsAPI.index].username),
-        ],
-      )),
+            children: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Messagemodel.messageList?.clear();
+                  },
+                  icon: Icon(Icons.arrow_back)),
+              CircleAvatar(
+                radius: 25,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Text(
+                    GetDetailsAPI.listResponse![GetDetailsAPI.index].username),
+              ),
+            ],
+          )),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
