@@ -126,7 +126,6 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
-              height: 610,
               child: SingleChildScrollView(
                 reverse: true,
                 child: ListView.builder(
@@ -183,7 +182,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(bottom: 5, left: 5),
+              padding: const EdgeInsets.only(left: 5),
               child: Row(children: [
                 Expanded(
                   child: Card(

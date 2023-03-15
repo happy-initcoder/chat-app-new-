@@ -74,6 +74,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   static const routeName = '/auth-Screen';
+
   @override
   Widget build(BuildContext context) {
     print(UserDetail.userid);

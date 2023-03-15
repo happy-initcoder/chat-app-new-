@@ -22,6 +22,7 @@ class ConversationList extends StatefulWidget {
 
 class _ConversationListState extends State<ConversationList> {
   String searchValue = '';
+  TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     ClassSocket.socket = IO.io(
@@ -48,9 +49,15 @@ class _ConversationListState extends State<ConversationList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: EasySearchBar(
-        title: Text('Conversations'),
-        onSearch: (value) => setState(() => searchValue = value),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.search),
+          ),
+        ],
+        title: Text('FLutter chat'),
+        automaticallyImplyLeading: false,
       ),
       body: ListView.builder(
           itemCount: GetDetailsAPI.listResponse?.length,
@@ -63,9 +70,9 @@ class _ConversationListState extends State<ConversationList> {
               child: Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 child: Card(
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.blue, width: 2),
-                      borderRadius: BorderRadius.circular(20)),
+                  // shape: RoundedRectangleBorder(
+                  //     side: BorderSide(color: Colors.blue, width: 2),
+                  //     borderRadius: BorderRadius.circular(20)),
                   child: Container(
                     width: double.infinity,
                     padding: EdgeInsets.all(10),
