@@ -79,104 +79,102 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     print(UserDetail.userid);
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Colors.cyan,
       body: Center(
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(60),
-          ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Form(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Center(
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(60),
-                        ),
-                        color: Colors.grey[500],
+        child: Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Form(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Center(
                         child: Padding(
                           padding: const EdgeInsets.all(10),
-                          child: Text(
-                            _isLogin ? 'Login' : 'Signup',
-                            style: TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.w800,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              _isLogin ? 'Login' : 'Signup',
+                              style: TextStyle(
+                                  fontSize: 25, fontWeight: FontWeight.w800),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Text("Email Address:"),
-                    TextFormField(
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      // decoration: InputDecoration(labelText: 'Email Address'),
-                    ),
-                    if (!_isLogin)
+                      Text("Email Address:"),
+                      TextFormField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        // decoration: InputDecoration(labelText: 'Email Address'),
+                      ),
+                      if (!_isLogin)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15),
+                          child: Text("UserName:"),
+                        ),
+                      if (!_isLogin)
+                        TextFormField(
+                          controller: userNameController,
+                          // decoration: InputDecoration(labelText: 'UserName'),
+                        ),
                       Padding(
                         padding: const EdgeInsets.only(top: 15),
-                        child: Text("UserName:"),
+                        child: Text("Password:"),
                       ),
-                    if (!_isLogin)
                       TextFormField(
-                        controller: userNameController,
-                        // decoration: InputDecoration(labelText: 'UserName'),
+                        controller: passwordController,
+                        // obscureText: true,
+                        // decoration: InputDecoration(labelText: 'Password'),
+                        validator: (value) {
+                          if (value!.isEmpty || value.length < 6) {
+                            return 'Password Must be atleast 7 characters long.';
+                          }
+                          return null;
+                        },
                       ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: Text("Password:"),
-                    ),
-                    TextFormField(
-                      controller: passwordController,
-                      // obscureText: true,
-                      // decoration: InputDecoration(labelText: 'Password'),
-                      validator: (value) {
-                        if (value!.isEmpty || value.length < 6) {
-                          return 'Password Must be atleast 7 characters long.';
-                        }
-                        return null;
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 35),
-                      child: Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (_isLogin) {
-                              login(
-                                emailController.text.toString(),
-                                passwordController.text.toString(),
-                              );
-                            } else {
-                              register(
-                                emailController.text.toString(),
-                                passwordController.text.toString(),
-                                userNameController.text.toString(),
-                              );
-                            }
-                          },
-                          child: Text(_isLogin ? 'Login' : 'Sign Up'),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 35),
+                        child: Center(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (_isLogin) {
+                                login(
+                                  emailController.text.toString(),
+                                  passwordController.text.toString(),
+                                );
+                              } else {
+                                register(
+                                  emailController.text.toString(),
+                                  passwordController.text.toString(),
+                                  userNameController.text.toString(),
+                                );
+                              }
+                            },
+                            child: Text(_isLogin ? 'Login' : 'Sign Up'),
+                          ),
                         ),
                       ),
-                    ),
-                    Center(
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _isLogin = !_isLogin;
-                          });
-                        },
-                        child: Text(_isLogin
-                            ? 'Create new Account'
-                            : 'Already have an account'),
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _isLogin = !_isLogin;
+                            });
+                          },
+                          child: Text(_isLogin
+                              ? 'Create new Account'
+                              : 'Already have an account'),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

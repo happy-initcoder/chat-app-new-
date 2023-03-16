@@ -5,9 +5,11 @@ import 'package:capp/Screens/authScreen.dart';
 import 'package:capp/widget/messageBubble.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../API/BaseUrl.dart';
 import '../API/messagemodel.dart';
+import '../providers/messageProvider.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -79,7 +81,10 @@ class _ChatScreenState extends State<ChatScreen> {
     ClassSocket.socket.onConnectError((data) => print('Connect Error: $data'));
     ClassSocket.socket
         .onDisconnect((data) => print('Socket.IO server disconnected'));
-    // socket.on('getMessage', (data) => );
+    ClassSocket.socket.on(
+        'getMessage',
+        (data) => Provider.of<MessageProvider>(context, listen: false)
+            .addNewMessage(MessageSocket.fromJson(data)));
   }
 
   @override
@@ -90,7 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
     //   IO.OptionBuilder().setTransports(['websocket']).setQuery(
     //       {'from': UserDetail.userid}).build(),
     // );
-    // _connectSocket();
+    _connectSocket();
     getMessages().then((value) {
       setState(() {
         Messagemodel.messageList?.addAll(value);
@@ -101,31 +106,32 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Row(
-            children: [
-              IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Messagemodel.messageList?.clear();
-                  },
-                  icon: Icon(Icons.arrow_back)),
-              CircleAvatar(
-                radius: 25,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(
-                    GetDetailsAPI.listResponse![GetDetailsAPI.index].username),
-              ),
-            ],
-          )),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+        appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Row(
+              children: [
+                IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Messagemodel.messageList?.clear();
+                    },
+                    icon: Icon(Icons.arrow_back)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: CircleAvatar(
+                    radius: 25,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Text(GetDetailsAPI
+                      .listResponse![GetDetailsAPI.index].username),
+                ),
+              ],
+            )),
+        body: Column(
           children: [
-            Container(
+            Expanded(
               child: SingleChildScrollView(
                 reverse: true,
                 child: ListView.builder(
@@ -135,25 +141,25 @@ class _ChatScreenState extends State<ChatScreen> {
                   itemBuilder: (context, index) {
                     return Row(
                       mainAxisAlignment: UserDetail.userid !=
-                              Messagemodel.messageList![index].to
+                              Messagemodel.messageList![index].from
                           ? MainAxisAlignment.end
                           : MainAxisAlignment.start,
                       children: <Widget>[
                         Container(
                           decoration: BoxDecoration(
                             color: UserDetail.userid !=
-                                    Messagemodel.messageList![index].to
+                                    Messagemodel.messageList![index].from
                                 ? Colors.grey[300]
                                 : Theme.of(context).colorScheme.secondary,
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(12),
                               topRight: Radius.circular(12),
                               bottomLeft: UserDetail.userid !=
-                                      Messagemodel.messageList![index].to
+                                      Messagemodel.messageList![index].from
                                   ? Radius.circular(12)
                                   : Radius.circular(0),
                               bottomRight: UserDetail.userid !=
-                                      Messagemodel.messageList![index].to
+                                      Messagemodel.messageList![index].from
                                   ? Radius.circular(0)
                                   : Radius.circular(12),
                             ),
@@ -167,7 +173,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             Messagemodel.messageList![index].text[0],
                             style: TextStyle(
                               color: UserDetail.userid !=
-                                      Messagemodel.messageList![index].to
+                                      Messagemodel.messageList![index].from
                                   ? Colors.black
                                   : Colors.white,
                               fontSize: 16,
@@ -182,32 +188,44 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 5),
-              child: Row(children: [
-                Expanded(
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        side: BorderSide(color: Colors.black)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 5, right: 5),
-                      child: TextFormField(
-                        controller: messageController,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Message...',
+              padding: const EdgeInsets.all(4.0),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.black),
+                  borderRadius: BorderRadius.circular(90),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: messageController,
+                          decoration: const InputDecoration(
+                            hintText: 'Type your message here...',
+                            border: InputBorder.none,
+                          ),
                         ),
-                        style: TextStyle(fontSize: 18),
                       ),
-                    ),
+                      IconButton(
+                        onPressed: () {
+                          if (messageController.text.trim().isNotEmpty) {
+                            _sendMessage();
+                          }
+                        },
+                        icon: const Icon(Icons.send),
+                      )
+                    ],
                   ),
                 ),
-                IconButton(onPressed: _sendMessage, icon: Icon(Icons.send))
-              ]),
+              ),
             )
           ],
-        ),
-      ),
-    );
+        ));
   }
 }

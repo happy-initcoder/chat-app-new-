@@ -1,5 +1,6 @@
 import 'package:capp/API/getDetailApi.dart';
 import 'package:capp/Screens/authScreen.dart';
+import 'package:capp/Screens/chatTesting.dart';
 import 'package:capp/Screens/conversationScreen.dart';
 import 'package:capp/Screens/chatScreen.dart';
 
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         AuthScreen.routeName: (ctx) => AuthScreen(),
         ConversationList.routeName: (ctx) => ConversationList(),
         ChatScreen.routeName: (ctx) => ChatScreen(),
+        ChatTestingScreen.routeName: (ctx) => ChatTestingScreen(),
       },
     );
   }

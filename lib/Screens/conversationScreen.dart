@@ -1,5 +1,7 @@
 import 'package:capp/API/firendCollection.dart';
 import 'package:capp/API/getDetailApi.dart';
+import 'package:capp/providers/messageProvider.dart';
+import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:capp/API/messagemodel.dart';
 import 'package:capp/Screens/chatScreen.dart';
@@ -10,6 +12,7 @@ import 'package:flutter/material.dart';
 import '../API/BaseUrl.dart';
 import '../API/socket.dart';
 import 'authScreen.dart';
+import 'chatTesting.dart';
 
 class ConversationList extends StatefulWidget {
   const ConversationList({super.key});
@@ -33,8 +36,11 @@ class _ConversationListState extends State<ConversationList> {
     GetDetailsAPI.getConversation().then((value) {
       setState(() {
         GetDetailsAPI.listResponse?.addAll(value);
+        GetDetailsAPI.listResponse
+            ?.removeWhere((element) => element.id == UserDetail.userid);
       });
     });
+    _connectSocket();
     super.initState();
   }
 
