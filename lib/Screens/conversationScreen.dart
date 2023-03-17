@@ -41,15 +41,24 @@ class _ConversationListState extends State<ConversationList> {
       });
     });
     _connectSocket();
+
     super.initState();
   }
 
   _connectSocket() {
-    ClassSocket.socket.onConnect((data) => print('connection established'));
+    ClassSocket.socket.onConnect((data) => print(data));
+    ClassSocket.socket.emit('addUser', {UserDetail.userid});
+    ClassSocket.socket.on('getUsers', (data) => print('all users '));
     ClassSocket.socket.onConnectError((data) => print('Connect Error: $data'));
     ClassSocket.socket
         .onDisconnect((data) => print('Socket.IO server disconnected'));
-    // socket.on('getMessage', (data) => );
+
+    // ClassSocket.socket.on('getMessage', (data) {
+    //   MessageProvider.newMessages.add(MessageSocket.fromJson(data));
+    //   print('messages ${data['text']}');
+    // });
+    // ClassSocket.socket
+    //     .on('getMessage', (data) => );
   }
 
   @override
@@ -71,6 +80,14 @@ class _ConversationListState extends State<ConversationList> {
             return InkWell(
               onTap: () {
                 Navigator.pushNamed(context, ChatScreen.routeName);
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (_) => ChangeNotifierProvider(
+                //         create: (context) => MessageProvider(),
+                //         child: ChatTestingScreen()),
+                //   ),
+                // );
                 GetDetailsAPI.getIndexVal(index);
               },
               child: Padding(

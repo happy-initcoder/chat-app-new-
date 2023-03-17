@@ -69,6 +69,10 @@ class _ChatScreenState extends State<ChatScreen> {
       'text': messageController.text.trim()
     });
     addMessages();
+    Messagemodel.messageList?.add(Messagemodel(
+      from: UserDetail.userid,
+      text: messageController.text.trim(),
+    ));
     messageController.clear();
   }
 
@@ -81,10 +85,6 @@ class _ChatScreenState extends State<ChatScreen> {
     ClassSocket.socket.onConnectError((data) => print('Connect Error: $data'));
     ClassSocket.socket
         .onDisconnect((data) => print('Socket.IO server disconnected'));
-    ClassSocket.socket.on(
-        'getMessage',
-        (data) => Provider.of<MessageProvider>(context, listen: false)
-            .addNewMessage(MessageSocket.fromJson(data)));
   }
 
   @override

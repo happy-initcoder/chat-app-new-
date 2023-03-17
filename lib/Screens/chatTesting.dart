@@ -73,39 +73,15 @@ class _ChatTestingScreenState extends State<ChatTestingScreen> {
     messageController.clear();
   }
 
-  // _reciveMessage(){
-  //   socket.on('getMessage', (data) => print(data));
-  // }
-
-  _connectSocket() {
-    ClassSocket.socket.onConnect((data) => print('connection established'));
-    ClassSocket.socket.onConnectError((data) => print('Connect Error: $data'));
-    ClassSocket.socket
-        .onDisconnect((data) => print('Socket.IO server disconnected'));
-    ClassSocket.socket.on(
-        'getMessage',
-        (data) => Provider.of<MessageProvider>(context, listen: false)
-            .addNewMessage(MessageSocket.fromJson(data)));
-  }
-
   @override
   void initState() {
     super.initState();
-    // ClassSocket.socket = IO.io(
-    //   '${BaseUrl.baseUrl}',
-    //   IO.OptionBuilder().setTransports(['websocket']).setQuery(
-    //       {'from': UserDetail.userid}).build(),
-    // );
-    // _connectSocket();
+
     getMessages().then((value) {
       setState(() {
         Messagemodel.messageList?.addAll(value);
       });
     });
-    ClassSocket.socket.on(
-        'getMessage',
-        (data) => Provider.of<MessageProvider>(context, listen: false)
-            .addNewMessage(MessageSocket.fromJson(data)));
   }
 
   @override
@@ -141,7 +117,7 @@ class _ChatTestingScreenState extends State<ChatTestingScreen> {
               builder: (_, provider, __) => ListView.separated(
                 padding: const EdgeInsets.all(16),
                 itemBuilder: (context, index) {
-                  final message = provider.SocketMessage[index];
+                  final message = MessageProvider.newMessages[index];
                   return Wrap(
                     alignment: message.senderId == UserDetail.userid
                         ? WrapAlignment.end
@@ -171,7 +147,7 @@ class _ChatTestingScreenState extends State<ChatTestingScreen> {
                 separatorBuilder: (_, index) => const SizedBox(
                   height: 5,
                 ),
-                itemCount: provider.SocketMessage.length,
+                itemCount: MessageProvider.newMessages.length,
               ),
             ),
           ),

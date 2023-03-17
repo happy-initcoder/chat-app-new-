@@ -31,4 +31,8 @@ class GetDetailsAPI {
     }
     return flist;
   }
+
+  static appendMessage(text) {
+    listResponse?.add(text);
+  }
 }

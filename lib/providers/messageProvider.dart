@@ -13,19 +13,23 @@ class MessageSocket {
 
   factory MessageSocket.fromJson(Map<String, dynamic> message) {
     return MessageSocket(
-      senderId: message['message'],
-      text: message['senderUsername'],
+      senderId: message['senderId'],
+      text: message['text'],
     );
   }
 }
 
 class MessageProvider extends ChangeNotifier {
   final List<MessageSocket> _SocketMessage = [];
+  static List<MessageSocket> newMessages = [];
 
   List<MessageSocket> get SocketMessage => _SocketMessage;
 
-  addNewMessage(MessageSocket message) {
-    _SocketMessage.add(message);
-    notifyListeners();
+  static void addNewMessage(MessageSocket message) {
+    // _SocketMessage.add(message);
+    newMessages.add(message);
+    print(newMessages);
+    // print(SocketMessage);
+    // notifyListeners();
   }
 }
