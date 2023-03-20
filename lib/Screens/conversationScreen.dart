@@ -53,12 +53,14 @@ class _ConversationListState extends State<ConversationList> {
     ClassSocket.socket
         .onDisconnect((data) => print('Socket.IO server disconnected'));
 
-    // ClassSocket.socket.on('getMessage', (data) {
-    //   MessageProvider.newMessages.add(MessageSocket.fromJson(data));
-    //   print('messages ${data['text']}');
-    // });
-    // ClassSocket.socket
-    //     .on('getMessage', (data) => );
+    // ClassSocket.socket.on(
+    //     'getMessage',
+    //     (data) => Provider.of<AppendMessage>(listen: false, context)
+    //         .addNewMessage(data));
+    // ClassSocket.socket.on(
+    //     'getMessage',
+    //     (data) => Messagemodel.messageList
+    //         ?.add(Messagemodel(from: data['senderId'], text: data['text'])));
   }
 
   @override
@@ -79,15 +81,15 @@ class _ConversationListState extends State<ConversationList> {
           itemBuilder: (BuildContext context, index) {
             return InkWell(
               onTap: () {
-                Navigator.pushNamed(context, ChatScreen.routeName);
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (_) => ChangeNotifierProvider(
-                //         create: (context) => MessageProvider(),
-                //         child: ChatTestingScreen()),
-                //   ),
-                // );
+                // Navigator.pushNamed(context, ChatScreen.routeName);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChangeNotifierProvider(
+                        create: (context) => AppendMessage(),
+                        child: ChatScreen()),
+                  ),
+                );
                 GetDetailsAPI.getIndexVal(index);
               },
               child: Padding(

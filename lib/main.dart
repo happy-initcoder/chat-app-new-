@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         AuthScreen.routeName: (ctx) => AuthScreen(),
         ConversationList.routeName: (ctx) => ConversationList(),
         ChatScreen.routeName: (ctx) => ChatScreen(),
-        ChatTestingScreen.routeName: (ctx) => ChatTestingScreen(),
+        // ChatTestingScreen.routeName: (ctx) => ChatTestingScreen(),
       },
     );
   }

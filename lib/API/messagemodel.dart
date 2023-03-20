@@ -11,7 +11,7 @@ class Messagemodel extends ChangeNotifier {
     // required this.updatedAt,
     // required this.v,
   });
-  static List<Messagemodel>? messageList = [];
+
   // String to;
   String from;
   List<String> text;
@@ -39,4 +39,28 @@ class Messagemodel extends ChangeNotifier {
         // "updatedAt": updatedAt.toIso8601String(),
         // "__v": v,
       };
+}
+
+class AppendMessage extends ChangeNotifier {
+  static String? dataId;
+  static String? dataText;
+  static List<Messagemodel> messageList = [];
+
+  addNewMessage(message, id) {
+    print(id);
+    String? senderId;
+    String? text;
+    senderId = id;
+    text = text;
+    messageList.add(Messagemodel(
+      from: id.toString(),
+      text: [message.toString()],
+    ));
+    // senderId = null;
+    // text = null;
+
+    // print('this is sender id ${senderId.toString()}');
+    // print('message is this  ${text.toString()}');
+    notifyListeners();
+  }
 }

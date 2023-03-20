@@ -32,7 +32,7 @@ class _ChatScreenState extends State<ChatScreen> {
         "to": GetDetailsAPI.listResponse![GetDetailsAPI.index].id,
         "text": messageController.text.trim(),
       });
-      print(response.body);
+
       if (response.statusCode == 200) {
         print('worked successfully');
       } else {
@@ -63,16 +63,22 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   _sendMessage() {
+    // AppendMessage.messageList.add(Messagemodel(
+    //   from: UserDetail.userid.toString(),
+    //   text: [messageController.text.trim().toString()],
+    // ));
+    Provider.of<AppendMessage>(context, listen: false).addNewMessage(
+      messageController.text.trim().toString(),
+      UserDetail.userid.toString(),
+    );
     ClassSocket.socket.emit('sendMessage', {
       'senderId': UserDetail.userid,
       'receiverId': GetDetailsAPI.listResponse![GetDetailsAPI.index].id,
       'text': messageController.text.trim()
     });
     addMessages();
-    Messagemodel.messageList?.add(Messagemodel(
-      from: UserDetail.userid,
-      text: messageController.text.trim(),
-    ));
+
+    print(AppendMessage.messageList);
     messageController.clear();
   }
 
@@ -81,10 +87,11 @@ class _ChatScreenState extends State<ChatScreen> {
   // }
 
   _connectSocket() {
-    ClassSocket.socket.onConnect((data) => print('connection established'));
-    ClassSocket.socket.onConnectError((data) => print('Connect Error: $data'));
-    ClassSocket.socket
-        .onDisconnect((data) => print('Socket.IO server disconnected'));
+    ClassSocket.socket.on(
+        'getMessage',
+        (data) => Provider.of<AppendMessage>(context, listen: false)
+            .addNewMessage(data['text'], data['senderId']));
+    ClassSocket.socket.on('getMessage', (data) => print(data['text']));
   }
 
   @override
@@ -98,7 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _connectSocket();
     getMessages().then((value) {
       setState(() {
-        Messagemodel.messageList?.addAll(value);
+        AppendMessage.messageList.addAll(value);
       });
     });
   }
@@ -113,7 +120,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 IconButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      Messagemodel.messageList?.clear();
+                      AppendMessage.messageList.clear();
                     },
                     icon: Icon(Icons.arrow_back)),
                 Padding(
@@ -134,56 +141,58 @@ class _ChatScreenState extends State<ChatScreen> {
             Expanded(
               child: SingleChildScrollView(
                 reverse: true,
-                child: ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  // scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return Row(
-                      mainAxisAlignment: UserDetail.userid !=
-                              Messagemodel.messageList![index].from
-                          ? MainAxisAlignment.end
-                          : MainAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          decoration: BoxDecoration(
-                            color: UserDetail.userid !=
-                                    Messagemodel.messageList![index].from
-                                ? Colors.grey[300]
-                                : Theme.of(context).colorScheme.secondary,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12),
-                              bottomLeft: UserDetail.userid !=
-                                      Messagemodel.messageList![index].from
-                                  ? Radius.circular(12)
-                                  : Radius.circular(0),
-                              bottomRight: UserDetail.userid !=
-                                      Messagemodel.messageList![index].from
-                                  ? Radius.circular(0)
-                                  : Radius.circular(12),
-                            ),
-                          ),
-                          width: 140,
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 16),
-                          margin:
-                              EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                          child: Text(
-                            Messagemodel.messageList![index].text[0],
-                            style: TextStyle(
+                child: Consumer<AppendMessage>(
+                  builder: (_, provider, __) => ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    // scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        mainAxisAlignment: UserDetail.userid !=
+                                AppendMessage.messageList[index].from
+                            ? MainAxisAlignment.start
+                            : MainAxisAlignment.end,
+                        children: <Widget>[
+                          Container(
+                            decoration: BoxDecoration(
                               color: UserDetail.userid !=
-                                      Messagemodel.messageList![index].from
-                                  ? Colors.black
-                                  : Colors.white,
-                              fontSize: 16,
+                                      AppendMessage.messageList[index].from
+                                  ? Colors.grey[300]
+                                  : Theme.of(context).colorScheme.secondary,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                topRight: Radius.circular(12),
+                                bottomLeft: UserDetail.userid !=
+                                        AppendMessage.messageList[index].from
+                                    ? Radius.circular(12)
+                                    : Radius.circular(0),
+                                bottomRight: UserDetail.userid !=
+                                        AppendMessage.messageList[index].from
+                                    ? Radius.circular(0)
+                                    : Radius.circular(12),
+                              ),
+                            ),
+                            width: 140,
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 16),
+                            margin: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            child: Text(
+                              AppendMessage.messageList[index].text[0],
+                              style: TextStyle(
+                                color: UserDetail.userid !=
+                                        AppendMessage.messageList[index].from
+                                    ? Colors.black
+                                    : Colors.white,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                  itemCount: Messagemodel.messageList?.length,
+                        ],
+                      );
+                    },
+                    itemCount: AppendMessage.messageList.length,
+                  ),
                 ),
               ),
             ),
